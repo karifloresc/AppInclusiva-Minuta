@@ -1,14 +1,16 @@
-package com.example.appinclusiva
+package com.example.appinclusiva.ui.screens
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.example.appinclusiva.data.repository.UsuariosRepository
 
 @Composable
 fun RecoverScreen(onBackToLogin: () -> Unit) {
     var email by remember { mutableStateOf("") }
+    var mensaje by remember { mutableStateOf("") }
 
     Column(
         modifier = Modifier
@@ -27,10 +29,34 @@ fun RecoverScreen(onBackToLogin: () -> Unit) {
             modifier = Modifier.fillMaxWidth()
         )
 
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(12.dp))
+
+        if (mensaje.isNotBlank()) {
+            Text(
+                text = mensaje,
+                style = MaterialTheme.typography.bodyMedium
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+        }
+
+        Spacer(modifier = Modifier.height(12.dp))
 
         Button(
-            onClick = { },
+            onClick = {
+                val e = email.trim()
+
+                if (e.isBlank()) {
+                    mensaje = "Ingresa tu email."
+                    return@Button
+                }
+
+                val usuario = UsuariosRepository.buscarPorEmail(e)
+                mensaje = if (usuario != null) {
+                    "Se envió un correo a $e ✅"
+                } else {
+                    "Email no registrado ❌"
+                }
+            },
             modifier = Modifier.fillMaxWidth()
         ) {
             Text("Enviar")

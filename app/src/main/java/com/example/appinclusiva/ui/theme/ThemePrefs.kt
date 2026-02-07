@@ -1,4 +1,4 @@
-package com.example.appinclusiva
+package com.example.appinclusiva.ui.theme
 
 import android.content.Context
 import androidx.datastore.preferences.core.booleanPreferencesKey

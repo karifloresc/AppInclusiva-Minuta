@@ -1,4 +1,4 @@
-package com.example.appinclusiva
+package com.example.appinclusiva.ui.screens
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -8,6 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.example.appinclusiva.data.model.Receta
 
 @Composable
 fun MinutaScreen(

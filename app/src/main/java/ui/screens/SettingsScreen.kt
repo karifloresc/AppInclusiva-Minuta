@@ -1,4 +1,4 @@
-package com.example.appinclusiva
+package com.example.appinclusiva.ui.screens
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
@@ -7,6 +7,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import com.example.appinclusiva.ui.theme.darkModeFlow
+import com.example.appinclusiva.ui.theme.setDarkMode
 import kotlinx.coroutines.launch
 
 @Composable

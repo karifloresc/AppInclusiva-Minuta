@@ -1,4 +1,4 @@
-package com.example.appinclusiva
+package com.example.appinclusiva.ui.screens
 
 import android.content.Intent
 import android.net.Uri

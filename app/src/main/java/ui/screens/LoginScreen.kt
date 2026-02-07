@@ -1,15 +1,13 @@
-package com.example.appinclusiva
+package com.example.appinclusiva.ui.screens
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.graphics.Color
+import com.example.appinclusiva.data.repository.UsuariosRepository
 
 @Composable
 fun LoginScreen(
@@ -19,6 +17,7 @@ fun LoginScreen(
 ) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+    var mensaje by remember { mutableStateOf("") }
 
     Column(
         modifier = Modifier
@@ -76,10 +75,37 @@ fun LoginScreen(
             )
         }
 
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(12.dp))
+
+        if (mensaje.isNotBlank()) {
+            Text(
+                text = mensaje,
+                style = MaterialTheme.typography.bodyMedium
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+        }
+
+        Spacer(modifier = Modifier.height(8.dp))
 
         Button(
-            onClick = { onLoginSuccess() },
+            onClick = {
+                val e = email.trim()
+                val p = password
+
+                if (e.isBlank() || p.isBlank()) {
+                    mensaje = "Ingresa email y contraseña."
+                    return@Button
+                }
+
+                val usuario = UsuariosRepository.buscarPorEmail(e)
+
+                if (usuario != null && usuario.password == p) {
+                    mensaje = ""
+                    onLoginSuccess()
+                } else {
+                    mensaje = "Credenciales incorrectas ❌"
+                }
+            },
             modifier = Modifier.fillMaxWidth()
         ) {
             Text("Ingresar")

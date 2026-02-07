@@ -1,48 +1,39 @@
-package com.example.appinclusiva
+package com.example.appinclusiva.ui.screens
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-
-
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import com.example.appinclusiva.data.model.Usuario
+import com.example.appinclusiva.data.repository.UsuariosRepository
 
 @OptIn(ExperimentalMaterial3Api::class)
-
 @Composable
 fun RegisterScreen(onBackToLogin: () -> Unit) {
-
 
     var nombre by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
 
-    // Para el ComboBox
+    // ComboBox
     var metodoComunicacion by remember { mutableStateOf("Texto") }
     val opcionesMetodo = listOf("Texto", "Pictogramas", "Frases rápidas")
 
-    // Para los CheckBox
+    // CheckBox
     var letraGrande by remember { mutableStateOf(false) }
     var altoContraste by remember { mutableStateOf(false) }
 
-    // Para los RadioButtons
+    // RadioButtons
     var tamanoTexto by remember { mutableStateOf("Grande") }
 
-    val scrollState = rememberScrollState()
-    val users = remember {
-        mutableStateListOf(
-            User("Quinn", "quinn@gmail.com", "Texto", true, false, "Grande"),
-            User("Fernando", "fernando@gmail.com", "Pictogramas", false, true, "Extra grande"),
-            User("Sergio", "sergio@gmail.com", "Frases rápidas", true, true, "Grande"),
-            User("Sandra", "sandra@gmail.com", "Texto", false, false, "Grande"),
-            User("Yumi", "yumi@gmail.com", "Pictogramas", true, false, "Extra grande")
-        )
-    }
+    // Mensaje UI (éxito / error)
+    var mensaje by remember { mutableStateOf("") }
 
+    val scrollState = rememberScrollState()
 
     Column(
         modifier = Modifier
@@ -97,7 +88,9 @@ fun RegisterScreen(onBackToLogin: () -> Unit) {
                 onValueChange = {},
                 readOnly = true,
                 label = { Text("Selecciona") },
-                modifier = Modifier.menuAnchor().fillMaxWidth()
+                modifier = Modifier
+                    .menuAnchor()
+                    .fillMaxWidth()
             )
             ExposedDropdownMenu(
                 expanded = expanded,
@@ -120,7 +113,7 @@ fun RegisterScreen(onBackToLogin: () -> Unit) {
         // CHECK LIST
         Text("Opciones de accesibilidad")
 
-        Row(verticalAlignment = androidx.compose.ui.Alignment.CenterVertically) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
             Checkbox(
                 checked = letraGrande,
                 onCheckedChange = { letraGrande = it }
@@ -128,7 +121,7 @@ fun RegisterScreen(onBackToLogin: () -> Unit) {
             Text("Letra grande")
         }
 
-        Row(verticalAlignment = androidx.compose.ui.Alignment.CenterVertically) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
             Checkbox(
                 checked = altoContraste,
                 onCheckedChange = { altoContraste = it }
@@ -157,32 +150,55 @@ fun RegisterScreen(onBackToLogin: () -> Unit) {
             Text("Extra grande")
         }
 
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Mensaje (si existe)
+        if (mensaje.isNotBlank()) {
+            Text(
+                text = mensaje,
+                style = MaterialTheme.typography.bodyMedium
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+        }
+
+        Spacer(modifier = Modifier.height(8.dp))
 
         Button(
             onClick = {
-                users.add(
-                    User(
-                        nombre = nombre,
-                        email = email,
-                        metodoComunicacion = metodoComunicacion,
-                        letraGrande = letraGrande,
-                        altoContraste = altoContraste,
-                        tamanoTexto = tamanoTexto
-                    )
+                val n = nombre.trim()
+                val e = email.trim()
+                val p = password
+
+                if (n.isBlank() || e.isBlank() || p.isBlank()) {
+                    mensaje = "Completa nombre, email y contraseña."
+                    return@Button
+                }
+
+                val nuevoUsuario = Usuario(
+                    nombre = n,
+                    email = e,
+                    password = p
                 )
 
-                nombre = ""
-                email = ""
-                password = ""
+                val registrado = UsuariosRepository.registrar(nuevoUsuario)
 
-                onBackToLogin() // ✅ volver al Login
+                if (registrado) {
+                    mensaje = "Usuario guardado ✅"
+
+                    // limpiar campos
+                    nombre = ""
+                    email = ""
+                    password = ""
+
+                    onBackToLogin() // volver al Login
+                } else {
+                    mensaje = "Ese email ya está registrado ❌"
+                }
             },
             modifier = Modifier.fillMaxWidth()
         ) {
             Text("Guardar usuario")
         }
-
 
         Spacer(modifier = Modifier.height(8.dp))
 
@@ -193,4 +209,3 @@ fun RegisterScreen(onBackToLogin: () -> Unit) {
         Spacer(modifier = Modifier.height(8.dp))
     }
 }
-
